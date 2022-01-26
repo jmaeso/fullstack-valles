@@ -1,0 +1,90 @@
+openapi: 3.0.3
+info:
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0
+  description: A REST API for creating, listing and deleting users.
+  title: Users service API
+  contact:
+    name: Joan Maeso
+    email: jmaeso@enti.cat
+  version: 0.0.1
+servers:
+  - url: http://127.0.0.1:8080
+    description: Development machine
+paths:
+  /users:
+    post:
+      tags:
+        - users
+      description: Creates a new user to the system with the provided values.
+      summary: Creates a new user
+      operationId: CreateUser
+      responses:
+        "201":
+          description: User created
+        "400":
+          description: In case any of the provided params was not valid.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "500":
+          description: In case of any unexpected internal error.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+components:
+  schemas:
+    User:
+      type: object
+      description: Main entity of the service
+      properties:
+        id:
+          description: Unique identifier of the user.
+          type: string
+          format: uuid
+          example: e22896bb-de9c-47d1-b5ae-005c31d49a6f
+        nickName:
+          description: nick name of the user.
+          type: string
+          example: God
+        password:
+          description: password for the user to login.
+          type: string
+          minLength: 5
+          example: $ekr€t
+        email:
+          description: email of the user.
+          type: string
+          example: leo.messi@fcb.com
+        country:
+          description: country of the user.
+          type: string
+          format: ISO 3166 alpha-2
+          example: AR
+      required:
+        - "id"
+        - "email"
+        - "password"
+        - "nickName"
+    Error:
+      description: ErrorResponse defines a standard error format for all the responses
+      properties:
+        error_code:
+          description: Internal code for the errors
+          type: string
+          example: "0001"
+        request_id:
+          example: host.example.com/random-0001
+          description: >-
+            Unique identifier for the request. This will map internally with a
+            log entry containing the error.
+          type: string
